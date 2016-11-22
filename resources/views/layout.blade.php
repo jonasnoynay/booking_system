@@ -23,11 +23,11 @@
 
 		@yield('custom-css')
 
-	@yield('nav')
+	
     </head>
 
 	<body>
-
+		@yield('nav')
 		@yield('content')
 		</body>
 
@@ -35,7 +35,7 @@
 	<script type="text/javascript" src="{{ asset('js/materialize.min.js') }}"></script>
 	
 	<script>
-	$('#signout').on('click', function(){
+	$('#signout, #sidebar_signout').on('click', function(){
 			firebase.auth().signOut().then(function() {
 		  // Sign-out successful.
 		}, function(error) {

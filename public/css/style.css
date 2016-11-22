@@ -1,3 +1,7 @@
 .primary-bg-1{
 	    background: #2196f3;
 }
+
+		#doctor-nav{
+			transform: translateX(0px);
+		} 
