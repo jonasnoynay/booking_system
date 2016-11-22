@@ -10,8 +10,8 @@
         <img src="http://materializecss.com/images/office.jpg">
       </div>
       <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
-      <a href="#!name"><span class="white-text name"></span></a>
-      <a href="#!email"><span class="white-text email"></span></a>
+      <a href="#!name"><span class="white-text name" id="user_name"></span></a>
+      <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
     <li><a href="{{ url('dashboard') }}" class="waves-effect">Dashboard</a></li>
     <li><a href="{{ url('clinics') }}" class="waves-effect">Clinics</a></li>
@@ -38,12 +38,13 @@
 @section('auth-js')
 
 <script async="true">
-		firebase.auth().onAuthStateChanged(function(user) {
-	  if (user) {
-	  	// User is signed in
-	  }else{
-	  	window.location.href="/";
-	  }
-	});
+    firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      $('#user_name').text(user.displayName);
+    $('#user_email').text(user.email);
+    }else{
+      window.location.href="/";
+    }
+  });
 </script>
 @endsection
