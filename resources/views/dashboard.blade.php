@@ -9,6 +9,12 @@
 	<link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
 @endsection
 
+<style>
+	.centered
+	{
+		text-align: center;
+	}
+</style>
 @section('content')
 
 <div class="row">
@@ -29,6 +35,23 @@
 	      </div>
 	</div>
 
+	<!-- <div id="calEventDialog">
+    <form>
+        <fieldset>
+        <label for="eventTitle">Title</label>
+        <input type="text" name="eventTitle" id="eventTitle" /><br>
+        <label for="eventStart">Start Date</label>
+        <input type="text" name="eventStart" id="eventStart" /><br>
+        <label for="eventEnd">End Date</label>
+        <input type="text" name="eventEnd" id="eventEnd" /><br>
+        <input type="radio" id="allday" name="allday" value="1">
+        Half Day
+        <input type="radio" id="allday" name="allday" value="2">
+        All Day
+        </fieldset>
+    </form>
+</div> -->
+
 </div>
 
 @endsection
@@ -43,6 +66,7 @@
 	  }else{
 	  	window.location.href="/";
 	  }
+
 	});
 </script>
 @endsection
@@ -55,9 +79,27 @@
 
     // page is now ready, initialize the calendar...
 
-	    $('#calendar').fullCalendar({
-	        // put your options and callbacks here
-	    });
+	   var calendar = $('#calendar').fullCalendar({
+       	header: {
+       		left: 'title',
+       		center: '',
+       		right: 'today,month,agendaDay,agendaWeek prev,next',
+       	},
+        selectable: true,
+        select: function(start, end, jsEvent, view){
+        	//alert(start.format("MM/DD/YYYY hh:mm a")+" to "+end.format("MM/DD/YYYY h\19h:mm a")+" in view "+view.name);
+        	var title = prompt("Enter a title for this event", "New event");
+        	if(title != null) {
+        		//create event
+        		var event = {
+        			title: title.trim() != "" ? title : "New event",
+        			start: start,
+        			end: end
+        		};
+        	};
+        	 //calendar.fullcalendar("renderEvent", event, true);
+        }
+    });
 
 	});
 	</script>
