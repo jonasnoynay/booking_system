@@ -18,3 +18,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
+Route::get('/clinics', function () {
+    return view('clinics');
+});
+Route::get('/services', function () {
+    return view('services');
+});
+Route::get('/profile', function () {
+    return view('profile');
+});
