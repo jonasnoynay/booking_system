@@ -207,7 +207,7 @@ var uid = null;
 
 				var maxPerPage = 10;
 
-				clinicsRef.child(uid).on('value', function(dataSnapshot){
+				clinicsRef.child(uid).orderByKey().on('value', function(dataSnapshot){
 
 					var dataList = dataSnapshot.val();
 
