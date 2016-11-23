@@ -3,8 +3,8 @@
 @section('content')
 
 <div class="row">
-
-<ul id="doctor-nav" class="side-nav">
+  @include('navbar')
+<ul id="doctor-nav" class="side-nav fixed">
     <li><div class="userView">
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
@@ -19,15 +19,77 @@
     <li><div class="divider"></div></li>
     <li><a class="subheader">My Account</a></li>
     <li class="active"><a class="waves-effect" href="{{ url('profile') }}">My Profile</a></li>
-    <!-- <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li> -->
+    <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li>
   </ul>
-	<div class="col s12" style="padding-left: 300px;">
-	@include('navbar')
-		<div class="card">
-		 	<div class="card-content">
-		 		<h4>My Profile</h4>
-		 	</div>
-	      </div>
+	<div class="col s12" id="main-panel">
+		<div class="card" style="max-width: 800px;">
+      <div class="card-content">
+        <div class="row">
+          <h4 class="panel-title">Update Profile</h4>
+        </div>
+
+        <div class="row">
+         <p>Personal Information</p>
+             <div class="row">
+              <form action="" id="editProfileForm">
+                <div class="row">
+                  <div class="input-field">
+                    <input id="fullname" type="text" class="validate">
+                    <label for="fullname">Fullname</label>
+                  </div>
+                    <div class="input-field">
+                    <input id="contact_no" type="text" class="validate">
+                    <label for="contact_no">Contact Number</label>
+                  </div>
+                  <div class="input-field">
+                    <input id="address" type="text" class="validate">
+                    <label for="address">Address</label>
+                  </div>
+                  <div class="file-field input-field">
+                    <div class="btn light-blue darken-3">
+                      <span>File</span>
+                      <input type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                      <input class="file-path validate" type="text">
+                    </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col s12">
+                  <button type="submit" class="waves-effect waves-light btn light-blue darken-4">Done</button>
+                </div>
+              </div>
+              </form>
+             </div>
+
+
+              <p>Change Password</p>
+              <div class="row">
+                <form action="" id="changePasswordForm">
+                    <div class="input-field">
+                      <input id="old_password" type="password" class="validate">
+                      <label for="old_password">Old Password</label>
+                    </div>
+
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="new_password" type="password" class="validate">
+                        <label for="new_password">New Password</label>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="confirm_new_password" type="password" class="validate">
+                        <label for="confirm_new_password">Confirm New Password</label>
+                      </div>
+                    </div>
+                    <button type="submit" class="waves-effect waves-light btn light-blue darken-4">Change Password</button>
+                </form>
+              </div>
+      </div>
+        </div>
 	</div>
 
 </div>
@@ -38,13 +100,93 @@
 @section('auth-js')
 
 <script async="true">
+
+var uid = null;
+
     firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       $('#user_name').text(user.displayName);
-    $('#user_email').text(user.email);
+      $('#user_email').text(user.email);
+      $('#user_signout').text(user.displayName);
+      uid = user.uid;
+
     }else{
       window.location.href="/";
     }
   });
 </script>
+@endsection
+
+
+@section('custom-js')
+  
+  <script type="text/javascript">
+
+  var database = firebase.database();
+  var toastDuration = 3000;
+
+  var usersRef = database.ref('users');
+
+  $(document).on('ready', function(){
+
+
+      $('#editProfileForm').on('submit', function(e){
+        e.preventDefault();
+
+          var fullname = $('#fullname').val();
+          var contact_no = $('#contact_no').val();
+          var email_address = $('#email_address').val();
+          var address = $('#address').val();
+
+          var user = firebase.auth().currentUser;
+          user.updateProfile({
+              displayName : fullname
+          }).then(function(){
+
+            var userRef = usersRef.child(user.uid);
+              userRef.set({
+                contact_no : contact_no,
+                address : address
+              }, function(){
+                Materialize.toast('Profile Info Updated.', toastDuration);
+              });
+
+          });
+
+      });
+
+      $('#changePasswordForm').on('submit', function(e){
+        e.preventDefault();
+        var old_password = $('#old_password').val();
+        var new_password = $('#new_password').val();
+        var confirm_new_password = $('#confirm_new_password').val();
+        if(new_password == confirm_new_password){
+          alert('gg');
+        }
+      });
+
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          uid = user.uid;
+          var userRef = usersRef.child(user.uid);
+          userRef.once('value', function(snap){
+            console.log(snap.val());
+              if(snap.val()){
+                  $('#contact_no').val(snap.val().contact_no);
+                  $('#address').val(snap.val().address);
+              }
+              $('#fullname').val(user.displayName);
+              Materialize.updateTextFields();
+          });
+
+        }else{
+          window.location.href="/";
+        }
+      });
+
+  });
+
+
+  </script>
+
 @endsection
