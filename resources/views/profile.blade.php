@@ -19,7 +19,7 @@
     <li><div class="divider"></div></li>
     <li><a class="subheader">My Account</a></li>
     <li class="active"><a class="waves-effect" href="{{ url('profile') }}">My Profile</a></li>
-    <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li>
+    <!-- <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li> -->
   </ul>
 	<div class="col s12" style="padding-left: 300px;">
 	@include('navbar')
