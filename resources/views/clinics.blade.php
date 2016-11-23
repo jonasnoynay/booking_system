@@ -151,15 +151,14 @@ var uid = null;
 		//initalize modals
 		$('.modal').modal();
 
-		$('.dropdown-button').dropdown({
+		$('#user_signout').dropdown({
 		      inDuration: 300,
 		      outDuration: 225,
 		      constrain_width: true, // Does not change width of dropdown to that of the activato
 		      gutter: 0, // Spacing from edge
 		      belowOrigin: true, // Displays dropdown below the button
 		      alignment: 'left' // Displays dropdown with edge aligned to the left of button
-		    }
-		  );
+		    });
 
 		$('#addClinicForm').on('submit', function(e){
 			e.preventDefault();
@@ -245,21 +244,6 @@ var uid = null;
 				});
 		}
 
-	/*	function setClinicValues(key, name, address){
-			var tr = $('#clinicsTable').find('#'+key);
-				if(tr){
-					tr.find('td').eq(0).text(name);
-					tr.find('td').eq(1).text(address);
-				}
-
-				 Materialize.toast('Clinic Updated.', toastDuration);
-		}
-
-		function removeClinic(key){
-			$('#clinicsTable').find('#'+key).remove();
-			Materialize.toast('Clinic Removed.', toastDuration);
-		}*/
-
 
 		var initiated = false;
 		firebase.auth().onAuthStateChanged(function(user) {
@@ -274,15 +258,11 @@ var uid = null;
 				});*/
 
 		    	clinicsRef.child(uid).on('child_removed', function(data){
-					//removeClinic(data.key );
 					Materialize.toast('Clinic Removed.', toastDuration);
 				});
 		    	clinicsRef.child(uid).on('child_changed', function(data){
 		    		Materialize.toast('Clinic Updated.', toastDuration);
-					//setClinicValues(data.key, data.val().name, data.val().address );
-
 				});
-
 		  }
 		});
 
@@ -308,8 +288,6 @@ var uid = null;
 				Materialize.updateTextFields();
 			}
 		});
-
-
 
 		$('#updateClinicForm').on('submit', function(e){
 			e.preventDefault();

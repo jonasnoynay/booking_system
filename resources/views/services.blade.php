@@ -3,8 +3,8 @@
 @section('content')
 
 <div class="row">
-
-<ul id="doctor-nav" class="side-nav">
+  @include('navbar')
+<ul id="doctor-nav" class="side-nav fixed">
     <li><div class="userView">
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
@@ -21,16 +21,97 @@
     <li><a class="waves-effect" href="{{ url('profile') }}">My Profile</a></li>
     <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li>
   </ul>
-	<div class="col s12" style="padding-left: 300px;">
-	@include('navbar')
-		<div class="card">
-		 	<div class="card-content">
-		 		<h4>Services</h4>
-		 	</div>
-	      </div>
+	<div class="col s12" id="main-panel">
+		<div class="card" style="max-width: 800px;">
+      <div class="card-content">
+        <div class="row">
+          <h4 class="panel-title">Services</h4>  <a class="waves-effect waves-light btn light-blue darken-4 right" href="#addService">ADD</a>
+        </div>
+        <div class="row">
+          <table class="bordered highlight styleTable">
+              <thead>
+                <tr>
+                    <th data-field="id">Name</th>
+                    <th data-field="name">Price</th>
+                    <th data-field="action" width="50"></th>
+                </tr>
+              </thead>
+
+              <tbody id="serviceTable">
+              </tbody>
+            </table>
+        </div>
+        <div class="row">
+          <div id="pagination"></div>
+        </div>
+      </div>
+        </div>
 	</div>
 
 </div>
+
+
+<div id="addService" class="modal" style="max-width: 600px;">
+    <form action="" id="addServiceForm">
+      <div class="modal-content">
+        <h5>Add Service</h5>
+        <div class="row">
+              <div class="row">
+                <div class="input-field">
+                  <input id="service_name" type="text" class="validate">
+                  <label for="service_name">Service Name</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field">
+                  <input id="service_price" type="text" class="validate">
+                  <label for="service_price">Service Price</label>
+                </div>
+              </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
+        <button type="submit" class="modal-action modal-close waves-effect waves-light btn-flat">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div id="editService" class="modal" style="max-width: 600px;">
+    <form action="" id="updateServiceForm">
+      <div class="modal-content">
+        <h5>Edit Clinic</h5>
+        <div class="row">
+              <div class="row">
+                <div class="input-field">
+                  <input id="edit_service_name" type="text" class="validate">
+                  <label for="edit_service_name" class="active">Service Name</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field">
+                  <input id="edit_service_price" type="text" class="validate">
+                  <label for="edit_service_price" class="active">Service Address</label>
+                </div>
+              </div>
+              <input type="hidden" id="edit_service_id">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
+        <button type="submit" class="modal-action modal-close waves-effect waves-light btn-flat">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="confirmDelete" class="modal" style="max-width: 300px;">
+    <div class="modal-content">
+      <h5>Delete Item?</h5>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
+     <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat" id="doDelete">Delete</a>
+    </div>
+  </div>
 
 @endsection
 
@@ -38,13 +119,191 @@
 @section('auth-js')
 
 <script async="true">
+
+var uid = null;
+
     firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       $('#user_name').text(user.displayName);
-    $('#user_email').text(user.email);
+      $('#user_email').text(user.email);
+      $('#user_signout').text(user.displayName);
+      uid = user.uid;
+
     }else{
       window.location.href="/";
     }
   });
 </script>
 @endsection
+
+
+@section('custom-js')
+  <script type="text/javascript" src="{{ asset('js/materialize-pagination.min.js') }}"></script>
+  <script>
+
+
+  var database = firebase.database();
+  var toastDuration = 3000;
+
+  //Firebase reference for clinics
+  var servicesRef = database.ref("services");
+
+
+  $(document).on('ready', function(){
+
+
+    $('.modal').modal();
+
+    $('#user_signout').dropdown({
+          inDuration: 300,
+          outDuration: 225,
+          constrain_width: true, // Does not change width of dropdown to that of the activato
+          gutter: 0, // Spacing from edge
+          belowOrigin: true, // Displays dropdown below the button
+          alignment: 'left' // Displays dropdown with edge aligned to the left of button
+        });
+
+        $('#addServiceForm').on('submit', function(e){
+          e.preventDefault();
+
+          // Get Data
+          var service_name = $('#service_name').val();
+          var service_price = $('#service_price').val();
+          
+          //Check if not null
+          if(service_name && service_price && uid){
+
+            //push data to clinics/uid
+            var newServiceRef = servicesRef.child(uid).push();
+            
+            //put value to new clinic key
+            newServiceRef.set({
+              name : service_name,
+              price : service_price
+            }).then(function(){
+              $('#service_name').val('');
+              $('#service_price').val('');
+              Materialize.toast('Service Added.', toastDuration);
+            });
+
+          }
+
+        });
+
+
+        function addServiceElement(key, name, price){
+          $('#serviceTable')
+            .append(
+              $('<tr>').attr('id', key).data('id', key)
+                .append( $('<td>').text(name) )
+                .append( $('<td>').text(price) )
+                .append( $('<td>').addClass('actions')
+                  .append( $('<i>').addClass('material-icons edit').text('mode_edit').css('width', '50%') )
+                  .append( $('<i>').addClass('material-icons delete').text('delete') )
+                 )
+              );
+
+            //Materialize.toast('Clinic Added.', toastDuration);
+        }
+
+
+        function initPagination(){
+
+        var maxPerPage = 10;
+
+        servicesRef.child(uid).on('value', function(dataSnapshot){
+
+          var dataList = dataSnapshot.val();
+
+          //console.log(dataList[Object.keys(dataList)[1]]);
+
+          var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);
+            lastPage = lastPage == 0 ? 1 : lastPage;
+            console.log(dataList);
+          $('#pagination').html('');
+          $('#pagination').materializePagination({
+              align: 'left',
+              lastPage:  lastPage,
+              firstPage:  1,
+              useUrlParameter: false,
+              onClickCallback: function(requestedPage){
+                  var end = requestedPage * maxPerPage; 
+                  var start = (end - maxPerPage) + 1;
+                  $('#serviceTable').html('');
+                  if(dataList){
+                  for(i=start;i<=end;i++){
+                      var key = Object.keys(dataList)[i - 1];
+                      var val = dataList[key];
+                      if(key && val){
+                        addServiceElement(key, val.name, val.price );
+                        //addClinicElement(data.key, data.val().name, data.val().address );
+                      }
+                      
+
+                    }
+                  }
+
+              }
+          });
+        });
+    }
+
+      var initiated = false;
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user && !initiated) {
+          initiated = true;
+            uid = user.uid;
+
+            initPagination();
+
+            /*clinicsRef.child(uid).on('child_added', function(data){
+            addClinicElement(data.key, data.val().name, data.val().address );
+          });*/
+
+            servicesRef.child(uid).on('child_removed', function(data){
+            Materialize.toast('Service Removed.', toastDuration);
+          });
+            servicesRef.child(uid).on('child_changed', function(data){
+              Materialize.toast('Service Updated.', toastDuration);
+          });
+        }
+      });
+
+          $(document).on('click', '.material-icons.delete', function(){
+          var tr = $(this).parents('tr');
+          var service_key = $(tr).data('id');
+          if(service_key){
+            $('#confirmDelete').modal('open');
+            $('#doDelete').off('click').on('click', function(){
+              $('#confirmDelete').modal('close');
+              servicesRef.child(uid).child(service_key).remove();
+            });
+          }
+        });
+        $(document).on('click', '.material-icons.edit', function(){
+          var tr = $(this).parents('tr');
+          var service_key = $(tr).data('id');
+          if(service_key){
+            $('#edit_service_id').val(service_key);
+            $('#edit_service_name').val($(tr).find('td').eq(0).text());
+            $('#edit_service_price').val($(tr).find('td').eq(1).text());
+            $('#editService').modal('open');
+            Materialize.updateTextFields();
+          }
+        });
+
+        $('#updateServiceForm').on('submit', function(e){
+            e.preventDefault();
+            var edit_service_id = $('#edit_service_id').val();
+            var edit_service_name = $('#edit_service_name').val();
+            var edit_service_price = $('#edit_service_price').val();
+            if(edit_service_id){
+              servicesRef.child(uid).child(edit_service_id).update({ name : edit_service_name, price : edit_service_price });
+            }
+
+          });
+
+  });
+  </script>
+  </script>
+  @endsection

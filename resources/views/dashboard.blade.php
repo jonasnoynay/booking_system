@@ -46,8 +46,8 @@
 
 
 <div class="row">
-
-<ul id="doctor-nav" class="side-nav">
+@include('navbar')
+<ul id="doctor-nav" class="side-nav fixed">
     <li><div class="userView">
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
@@ -64,8 +64,8 @@
     <li><a class="waves-effect" href="{{ url('profile') }}">My Profile</a></li>
     <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li>
   </ul>
-	<div class="col s12" style="padding-left: 300px;">
-	@include('navbar')
+	<div class="col s12" id="main-panel">
+
 		<div class="card">
 		 	<div class="card-content">
 		 		<div id="calendar"></div>
@@ -85,6 +85,7 @@
 	  if (user) {
 	  	$('#user_name').text(user.displayName);
 		$('#user_email').text(user.email);
+		$('#user_signout').text(user.displayName);
 	  }else{
 	  	window.location.href="/";
 	  }
@@ -98,6 +99,15 @@
 	<script>
 
 		$(document).ready(function() {
+
+			$('#user_signout').dropdown({
+		      inDuration: 300,
+		      outDuration: 225,
+		      constrain_width: true, // Does not change width of dropdown to that of the activato
+		      gutter: 0, // Spacing from edge
+		      belowOrigin: true, // Displays dropdown below the button
+		      alignment: 'left' // Displays dropdown with edge aligned to the left of button
+		    });
 
     // page is now ready, initialize the calendar...
 
