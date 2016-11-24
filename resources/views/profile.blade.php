@@ -48,17 +48,16 @@
                   <div class="file-field input-field">
                     <div class="btn light-blue darken-3">
                       <span>File</span>
-                      <input type="file">
+                      <input type="file" id="profileFileUpload">
                     </div>
                     <div class="file-path-wrapper">
                       <input class="file-path validate" type="text">
+                      <input type="hidden" id="profile_picture">
                     </div>
                   </div>
               </div>
               <div class="row">
-                <div class="col s12">
                   <button type="submit" class="waves-effect waves-light btn light-blue darken-4">Done</button>
-                </div>
               </div>
               </form>
              </div>
@@ -108,6 +107,7 @@ var uid = null;
       $('#user_name').text(user.displayName);
       $('#user_email').text(user.email);
       $('#user_signout').text(user.displayName);
+      $('#profile_picture').text(user.photoURL);
       uid = user.uid;
 
     }else{
@@ -124,6 +124,7 @@ var uid = null;
 
   var database = firebase.database();
   var toastDuration = 3000;
+  var storageRef = firebase.storage().ref();
 
   var usersRef = database.ref('users');
 
@@ -137,21 +138,46 @@ var uid = null;
           var contact_no = $('#contact_no').val();
           var email_address = $('#email_address').val();
           var address = $('#address').val();
+          var profile_picture = $('#profile_picture').val();
+          if($('#profileFileUpload').val() != ""){
+            var file = $('#profileFileUpload').prop('files')[0];
 
-          var user = firebase.auth().currentUser;
-          user.updateProfile({
-              displayName : fullname
-          }).then(function(){
+            if(file){
+              var uploadRef = storageRef.child('uploads/'+file.name);
+                uploadRef.put(file).then(function(snap){
+                  profile_picture = uploadRef.fullPath;
+                  doUpdate();
+                });
+            }
+            
+       /*     var reader = new FileReader();
+            reader.onload = function(){
+              console.log(reader.result);
+            };
+            reader.readAsDataURL($('#profileFileUpload').prop('files')[0]);*/
+          }else{
+            doUpdate();
+          }
 
-            var userRef = usersRef.child(user.uid);
-              userRef.set({
-                contact_no : contact_no,
-                address : address
-              }, function(){
-                Materialize.toast('Profile Info Updated.', toastDuration);
-              });
+          
+          
+          function doUpdate(){
+            var user = firebase.auth().currentUser;
+            user.updateProfile({
+              displayName : fullname,
+              photoURL : profile_picture
+            }).then(function(){
 
-          });
+              var userRef = usersRef.child(user.uid);
+                userRef.set({
+                  contact_no : contact_no,
+                  address : address
+                }, function(){
+                  Materialize.toast('Profile Info Updated.', toastDuration);
+                });
+
+            });
+          }
 
       });
 
