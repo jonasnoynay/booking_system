@@ -171,12 +171,13 @@ var uid = null;
 			if(clinic_name && clinic_address && uid){
 
 				//push data to clinics/uid
-				var newClinicRef = clinicsRef.child(uid).push();
+				var newClinicRef = clinicsRef.push();
 				
 				//put value to new clinic key
 				newClinicRef.set({
 					name : clinic_name,
-					address : clinic_address
+					address : clinic_address,
+					uid : uid
 				}).then(function(){
 					$('#clinic_name').val('');
 					$('#clinic_address').val('');
@@ -207,7 +208,7 @@ var uid = null;
 
 				var maxPerPage = 10;
 
-				clinicsRef.child(uid).orderByKey().on('value', function(dataSnapshot){
+				clinicsRef.orderByChild('uid').equalTo(uid).on('value', function(dataSnapshot){
 
 					var dataList = dataSnapshot.val();
 
@@ -257,10 +258,10 @@ var uid = null;
 					addClinicElement(data.key, data.val().name, data.val().address );
 				});*/
 
-		    	clinicsRef.child(uid).on('child_removed', function(data){
+		    	clinicsRef.orderByChild('uid').equalTo(uid).on('child_removed', function(data){
 					Materialize.toast('Clinic Removed.', toastDuration);
 				});
-		    	clinicsRef.child(uid).on('child_changed', function(data){
+		    	clinicsRef.orderByChild('uid').equalTo(uid).on('child_changed', function(data){
 		    		Materialize.toast('Clinic Updated.', toastDuration);
 				});
 		  }
@@ -273,7 +274,7 @@ var uid = null;
 				$('#confirmDelete').modal('open');
 				$('#doDelete').off('click').on('click', function(){
 					$('#confirmDelete').modal('close');
-					clinicsRef.child(uid).child(clinic_key).remove();
+					clinicsRef.child(clinic_key).remove();
 				});
 			}
 		});
@@ -295,7 +296,7 @@ var uid = null;
 			var edit_clinic_name = $('#edit_clinic_name').val();
 			var edit_clinic_address = $('#edit_clinic_address').val();
 			if(edit_clinic_id){
-				clinicsRef.child(uid).child(edit_clinic_id).update({ name : edit_clinic_name, address : edit_clinic_address });
+				clinicsRef.child(edit_clinic_id).update({ name : edit_clinic_name, address : edit_clinic_address });
 			}
 
 		});

@@ -58,6 +58,17 @@
         <div class="row">
               <div class="row">
                 <div class="input-field">
+                  <select>
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                  </select>
+                  <label>Materialize Select</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field">
                   <input id="service_name" type="text" class="validate">
                   <label for="service_name">Service Name</label>
                 </div>
@@ -79,7 +90,7 @@
   <div id="editService" class="modal" style="max-width: 600px;">
     <form action="" id="updateServiceForm">
       <div class="modal-content">
-        <h5>Edit Clinic</h5>
+        <h5>Edit Service</h5>
         <div class="row">
               <div class="row">
                 <div class="input-field">
@@ -153,6 +164,8 @@ var uid = null;
 
 
     $('.modal').modal();
+
+     $('select').material_select();
 
     $('#user_signout').dropdown({
           inDuration: 300,
