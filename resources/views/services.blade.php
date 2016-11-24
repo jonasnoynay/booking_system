@@ -33,6 +33,7 @@
                 <tr>
                     <th data-field="id">Name</th>
                     <th data-field="name">Price</th>
+                    <th data-field="name">Clinic</th>
                     <th data-field="action" width="50"></th>
                 </tr>
               </thead>
@@ -234,16 +235,24 @@ var uid = null;
 
 
         function addServiceElement(key, name, price, clinic_id){
-          $('#serviceTable')
-            .append(
-              $('<tr>').attr('id', key).data('id', key).data('clinic_id', clinic_id)
+
+          var tr =  $('<tr>').attr('id', key).data('id', key).data('clinic_id', clinic_id)
                 .append( $('<td>').text(name) )
                 .append( $('<td>').text(price) )
+                .append( $('<td>').addClass('clinic') )
                 .append( $('<td>').addClass('actions')
                   .append( $('<i>').addClass('material-icons edit').text('mode_edit').css('width', '50%') )
                   .append( $('<i>').addClass('material-icons delete').text('delete') )
-                 )
-              );
+                 );
+
+          $('#serviceTable')
+            .append(tr);
+
+             clinicsRef.child(clinic_id).once('value', function(dataSnapshot){
+                        tr.find('clinic').text(dataSnapshot.val().name);
+                      });
+
+
 
             //Materialize.toast('Clinic Added.', toastDuration);
         }
@@ -362,8 +371,9 @@ var uid = null;
             var edit_service_id = $('#edit_service_id').val();
             var edit_service_name = $('#edit_service_name').val();
             var edit_service_price = $('#edit_service_price').val();
+            var edit_clinic_id = $('#editServiceSelectClinic').val();
             if(edit_service_id){
-              servicesRef.child(edit_service_id).update({ name : edit_service_name, price : edit_service_price });
+              servicesRef.child(edit_service_id).update({ name : edit_service_name, price : edit_service_price, clinic_id : edit_clinic_id });
             }
 
           });
