@@ -58,13 +58,14 @@
         <div class="row">
               <div class="row">
                 <div class="input-field">
-                  <select>
-                    <option value="" disabled selected>Choose your option</option>
+                  <select id="addServiceSelectClinic">
+                        <option value="" disabled selected>Choose a clinic</option>
+                    <!-- 
                     <option value="1">Option 1</option>
                     <option value="2">Option 2</option>
-                    <option value="3">Option 3</option>
+                    <option value="3">Option 3</option> -->
                   </select>
-                  <label>Materialize Select</label>
+                  <label>Clinic</label>
                 </div>
               </div>
               <div class="row">
@@ -92,6 +93,19 @@
       <div class="modal-content">
         <h5>Edit Service</h5>
         <div class="row">
+              <div class="row">
+                <div class="input-field">
+                  <select id="editServiceSelectClinic">
+                        <option value="" disabled selected>Choose a clinic</option>
+                    <!-- 
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option> -->
+                  </select>
+                  <label>Clinic</label>
+                </div>
+              </div>
+
               <div class="row">
                 <div class="input-field">
                   <input id="edit_service_name" type="text" class="validate">
@@ -158,7 +172,7 @@ var uid = null;
 
   //Firebase reference for clinics
   var servicesRef = database.ref("services");
-
+  var clinicsRef = database.ref("clinics");
 
   $(document).on('ready', function(){
 
@@ -182,21 +196,34 @@ var uid = null;
           // Get Data
           var service_name = $('#service_name').val();
           var service_price = $('#service_price').val();
-          
-          //Check if not null
-          if(service_name && service_price && uid){
+          var clinic_id = $('#addServiceSelectClinic').val();
 
-            //push data to clinics/uid
-            var newServiceRef = servicesRef.child(uid).push();
+          if(service_name && service_price && uid && clinic_id){
+
+            var newServiceRef = servicesRef.push();
             
-            //put value to new clinic key
+
+
+
             newServiceRef.set({
               name : service_name,
-              price : service_price
+              price : service_price,
+              uid : uid,
+              clinic_id : clinic_id
             }).then(function(){
-              $('#service_name').val('');
-              $('#service_price').val('');
-              Materialize.toast('Service Added.', toastDuration);
+
+              var serviceKey = newServiceRef.key;
+
+              var updateData = {};
+
+              updateData[serviceKey] = true;              
+
+              clinicsRef.child(clinic_id).child('services').update(updateData).then(function(){
+                  $('#service_name').val('');
+                  $('#service_price').val('');
+                  Materialize.toast('Service Added.', toastDuration);
+              });
+
             });
 
           }
@@ -204,10 +231,12 @@ var uid = null;
         });
 
 
-        function addServiceElement(key, name, price){
+
+
+        function addServiceElement(key, name, price, clinic_id){
           $('#serviceTable')
             .append(
-              $('<tr>').attr('id', key).data('id', key)
+              $('<tr>').attr('id', key).data('id', key).data('clinic_id', clinic_id)
                 .append( $('<td>').text(name) )
                 .append( $('<td>').text(price) )
                 .append( $('<td>').addClass('actions')
@@ -224,7 +253,25 @@ var uid = null;
 
         var maxPerPage = 10;
 
-        servicesRef.child(uid).on('value', function(dataSnapshot){
+        clinicsRef.orderByChild('uid').equalTo(uid).once('value', function(dataSnapshot){
+
+            //<option value="" disabled selected>Choose your option</option>
+            var addServiceSelectClinic = $('#addServiceSelectClinic').html('');
+            var editServiceSelectClinic = $('#editServiceSelectClinic').html('');
+            addServiceSelectClinic.append( $('<option value="" disabled selected>').text('Choose a clinic') );
+            editServiceSelectClinic.append( $('<option value="" disabled selected>').text('Choose a clinic') );
+
+
+            dataSnapshot.forEach(function(childSnap){
+              addServiceSelectClinic.append( $('<option value="'+childSnap.key+'">').text(childSnap.val().name) );
+              editServiceSelectClinic.append( $('<option value="'+childSnap.key+'">').text(childSnap.val().name) );
+            });
+            $(addServiceSelectClinic).material_select();
+            $(editServiceSelectClinic).material_select();
+
+        });
+
+        servicesRef.orderByChild('uid').equalTo(uid).on('value', function(dataSnapshot){
 
           var dataList = dataSnapshot.val();
 
@@ -232,7 +279,6 @@ var uid = null;
 
           var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);
             lastPage = lastPage == 0 ? 1 : lastPage;
-            console.log(dataList);
           $('#pagination').html('');
           $('#pagination').materializePagination({
               align: 'left',
@@ -248,7 +294,7 @@ var uid = null;
                       var key = Object.keys(dataList)[i - 1];
                       var val = dataList[key];
                       if(key && val){
-                        addServiceElement(key, val.name, val.price );
+                        addServiceElement(key, val.name, val.price, val.clinic_id );
                         //addClinicElement(data.key, data.val().name, data.val().address );
                       }
                       
@@ -258,6 +304,7 @@ var uid = null;
 
               }
           });
+
         });
     }
 
@@ -273,10 +320,10 @@ var uid = null;
             addClinicElement(data.key, data.val().name, data.val().address );
           });*/
 
-            servicesRef.child(uid).on('child_removed', function(data){
+            servicesRef.orderByChild('uid').equalTo(uid).on('child_removed', function(data){
             Materialize.toast('Service Removed.', toastDuration);
           });
-            servicesRef.child(uid).on('child_changed', function(data){
+            servicesRef.orderByChild('uid').equalTo(uid).on('child_changed', function(data){
               Materialize.toast('Service Updated.', toastDuration);
           });
         }
@@ -285,22 +332,27 @@ var uid = null;
           $(document).on('click', '.material-icons.delete', function(){
           var tr = $(this).parents('tr');
           var service_key = $(tr).data('id');
+          var clinic_id = $(tr).data('clinic_id');
           if(service_key){
             $('#confirmDelete').modal('open');
             $('#doDelete').off('click').on('click', function(){
               $('#confirmDelete').modal('close');
-              servicesRef.child(uid).child(service_key).remove();
+              servicesRef.child(service_key).remove();
+              clinicsRef.child(clinic_id).child("services").child(service_key).remove();
             });
           }
         });
         $(document).on('click', '.material-icons.edit', function(){
           var tr = $(this).parents('tr');
           var service_key = $(tr).data('id');
+          var clinic_id = $(tr).data('clinic_id');
           if(service_key){
             $('#edit_service_id').val(service_key);
             $('#edit_service_name').val($(tr).find('td').eq(0).text());
             $('#edit_service_price').val($(tr).find('td').eq(1).text());
+            $('#editServiceSelectClinic').val(clinic_id);
             $('#editService').modal('open');
+            $('#editServiceSelectClinic').material_select();
             Materialize.updateTextFields();
           }
         });
@@ -311,7 +363,7 @@ var uid = null;
             var edit_service_name = $('#edit_service_name').val();
             var edit_service_price = $('#edit_service_price').val();
             if(edit_service_id){
-              servicesRef.child(uid).child(edit_service_id).update({ name : edit_service_name, price : edit_service_price });
+              servicesRef.child(edit_service_id).update({ name : edit_service_name, price : edit_service_price });
             }
 
           });
