@@ -153,6 +153,21 @@ var uid = null;
       $('#user_name').text(user.displayName);
       $('#user_email').text(user.email);
       $('#user_signout').text(user.displayName);
+
+      if(user.photoURL){
+
+        var storage = firebase.storage();
+
+        var storageRef = storage.ref();
+
+        storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+
+          console.log(url);
+        }).catch(function(error){
+          console.log('error in storage');
+          console.log(error);
+        });
+      }
       uid = user.uid;
 
     }else{
