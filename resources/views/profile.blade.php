@@ -186,12 +186,6 @@ var uid = null;
                   doUpdate();
                 });
             }
-            
-       /*     var reader = new FileReader();
-            reader.onload = function(){
-              console.log(reader.result);
-            };
-            reader.readAsDataURL($('#profileFileUpload').prop('files')[0]);*/
           }else{
             doUpdate();
           }
@@ -210,6 +204,26 @@ var uid = null;
                   contact_no : contact_no,
                   address : address
                 }, function(){
+
+                  if(profile_picture){
+                    storageRef.child(profile_picture).getDownloadURL().then(function(url){
+                      if(url){
+                        $('#profilePic').attr('src', url);
+                      }
+                    }).catch(function(error){
+                      console.log(error);
+                    });
+                  }
+
+
+                   /*storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+                      if(url){
+                          $('#profilePic').attr('src', url);
+                          $('#profilePreview').attr('src', url);
+                        }
+                  }).catch(function(error){
+                      console.log(error);
+                    });*/
                   Materialize.toast('Profile Info Updated.', toastDuration);
                 });
 
@@ -217,6 +231,21 @@ var uid = null;
           }
 
       });
+
+
+/*profilePreview*/
+
+$('#profileFileUpload').on('change', function(){
+
+    if(this.files && this.files[0]){
+      var reader = new FileReader();
+      reader.onload = function(e){
+          $('#profilePreview').attr('src', e.target.result);
+      }
+      reader.readAsDataURL(this.files[0]);
+    }
+});
+
 
       $('#changePasswordForm').on('submit', function(e){
         e.preventDefault();
