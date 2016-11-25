@@ -9,7 +9,7 @@
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
       </div>
-      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg" id="profilePic"></a>
       <a href="#!name"><span class="white-text name" id="user_name"></span></a>
       <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
@@ -125,6 +125,17 @@ var uid = null;
       $('#profile_picture').text(user.photoURL);
       uid = user.uid;
 
+
+      if(user.photoURL){
+          storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+              if(url){
+                  $('#profilePic').attr('src', url);
+                }
+          }).catch(function(error){
+              console.log(error);
+            });
+          }
+
     }else{
       window.location.href="/";
     }
@@ -176,7 +187,7 @@ var uid = null;
 
           
           
-          function doUpdate(){
+        function doUpdate(){
             var user = firebase.auth().currentUser;
             user.updateProfile({
               displayName : fullname,
