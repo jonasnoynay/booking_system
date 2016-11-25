@@ -44,10 +44,21 @@
         </div>
 
         <div class="row">
-         <p>Personal Information</p>
+          <div class="row">
+             <p>Personal Information</p>
+          </div>
              <div class="row">
               <form action="" id="editProfileForm">
                 <div class="row">
+
+                <div class="row">
+                  <div class="input-field updatePicWrapper">
+                    <img src="http://materializecss.com/images/yuna.jpg" alt="" id="profilePreview">
+                    <input type="hidden" id="profile_picture">
+                    <input type="file" class="updatePicFile" id="profileFileUpload">
+                    </div>
+                  </div>
+
                   <div class="input-field">
                     <input id="fullname" type="text" class="validate">
                     <label for="fullname">Fullname</label>
@@ -60,16 +71,16 @@
                     <input id="address" type="text" class="validate">
                     <label for="address">Address</label>
                   </div>
-                  <div class="file-field input-field">
+                  <!-- <div class="file-field input-field">
                     <div class="btn light-blue darken-3">
                       <span>File</span>
-                      <input type="file" id="profileFileUpload">
+                      <input type="file">
                     </div>
                     <div class="file-path-wrapper">
                       <input class="file-path validate" type="text">
                       <input type="hidden" id="profile_picture">
                     </div>
-                  </div>
+                  </div> -->
               </div>
               <div class="row">
                   <button type="submit" class="waves-effect waves-light btn light-blue darken-4">Done</button>
@@ -129,6 +140,7 @@ var uid = null;
           storageRef.child(user.photoURL).getDownloadURL().then(function(url){
               if(url){
                   $('#profilePic').attr('src', url);
+                  $('#profilePreview').attr('src', url);
                 }
           }).catch(function(error){
               console.log(error);
@@ -212,7 +224,7 @@ var uid = null;
         var new_password = $('#new_password').val();
         var confirm_new_password = $('#confirm_new_password').val();
         if(new_password == confirm_new_password){
-          alert('gg');
+          // proceed to update password
         }
       });
 

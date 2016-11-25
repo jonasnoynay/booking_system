@@ -86,3 +86,28 @@ nav .nav-wrapper{
     margin-left: -32px;
     margin-top: -32px;
 }
+
+
+.updatePicWrapper{
+	float: left;
+    margin: 0;
+    max-width:200px;
+}
+
+.updatePicWrapper img{
+	width: 100%;
+}
+
+.updatePicWrapper .updatePicFile{
+cursor: pointer;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    width: 100%;
+    opacity: 0;
+    -moz-opacity: 0;
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0)
+}
