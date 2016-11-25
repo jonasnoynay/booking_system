@@ -105,6 +105,35 @@
     </form>
   </div>
 
+  <div id="loginUser" class="modal" style="max-width: 600px;">
+    <form action="" id="addClinicForm">
+    	<div class="modal-content">
+	      <h5>Login</h5>
+	      <div class="row">
+	              <div class="row">
+				        <div class="input-field">
+				          <input id="login_username" type="text" class="validate">
+				          <label for="login_username">Username</label>
+				        </div>
+			      	</div>
+	      			<div class="row">
+				        <div class="input-field">
+				          <input id="login_password" type="password" class="validate">
+				          <label for="login_password">Password</label>
+				        </div>
+			      	</div>
+			      	<div class="row">
+			      		<button type="submit" class="modal-action modal-close waves-effect waves-light btn">Submit</button>
+			      	</div>
+	      </div>
+	    </div>
+<!-- 	    <div class="modal-footer">
+  <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
+  <button type="submit" class="modal-action modal-close waves-effect waves-light btn-flat">Submit</button>
+</div> -->
+    </form>
+  </div>
+
 @endsection
 
 @section('auth-js')
@@ -114,22 +143,10 @@
 var uid = null;
 		firebase.auth().onAuthStateChanged(function(user) {
 	  if (user) {
-	  	/*$('#user_name').text(user.displayName);
-		$('#user_email').text(user.email);*/
 		$('#user_signout').text(user.displayName);
-
 		uid = user.uid;
-
-		/*if(user.photoURL){
-          storageRef.child(user.photoURL).getDownloadURL().then(function(url){
-              if(url){
-                  $('#profilePic').attr('src', url);
-                }
-          }).catch(function(error){
-              console.log(error);
-            });
-          }*/
-
+	  }else{
+	  	$('#login').show();
 	  }
 	});
 </script>
@@ -140,7 +157,22 @@ var uid = null;
 	<script type="text/javascript" src="{{ asset('js/fullcalendar.min.js') }}"></script>
 	<script>
 
+	$('#signout').on('click', function(){
+	
+	firebase.auth().signOut().then(function() {
+		  window.location.href="/";
+		}, function(error) {
+		  	console.log(error);
+		});
+	});
+
 		$(document).on('ready', function(){
+		firebase.auth().onAuthStateChanged(function(user) {
+		  if (user) {
+		  }else{
+		  	$('#login').show();
+		  }
+		});
 
 
 			//initalize modals
@@ -160,6 +192,8 @@ var uid = null;
 
 					if(uid){
 						$('#addAppointment').modal('open');
+					}else{
+						$('#loginUser').modal('open');
 					}
 
 			        //alert('Clicked on: ' + date.format()) ex. 2016-11-09;
