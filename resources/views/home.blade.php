@@ -110,7 +110,8 @@
     	<div class="modal-content">
 	      <h5>Login</h5>
 	      <div class="row">
-	              <div class="row">
+	            <form action="" id="loginForm">
+	            	  <div class="row">
 				        <div class="input-field">
 				          <input id="login_username" type="text" class="validate">
 				          <label for="login_username">Username</label>
@@ -125,6 +126,7 @@
 			      	<div class="row">
 			      		<button type="submit" class="modal-action modal-close waves-effect waves-light btn">Submit</button>
 			      	</div>
+	            </form>
 	      </div>
 	    </div>
 <!-- 	    <div class="modal-footer">
@@ -172,6 +174,11 @@ var uid = null;
 		  }else{
 		  	$('#login').show();
 		  }
+		});
+
+		$('#loginForm').on('submit', function(e){
+			e.preventDefault();
+			console.log('login');
 		});
 
 
