@@ -24,6 +24,21 @@
 	<div class="col s12" id="main-panel">
 		<div class="card" style="max-width: 800px;">
       <div class="card-content">
+
+        <div class="preloader-container">
+              <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
         <div class="row">
           <h4 class="panel-title">Update Profile</h4>
         </div>
@@ -202,6 +217,7 @@ var uid = null;
                   $('#address').val(snap.val().address);
               }
               $('#fullname').val(user.displayName);
+              stopPreloader();
               Materialize.updateTextFields();
           });
 

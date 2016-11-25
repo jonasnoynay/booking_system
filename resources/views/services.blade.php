@@ -9,7 +9,7 @@
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
       </div>
-      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg" id="profilePic"></a>
       <a href="#!name"><span class="white-text name" id="user_name"></span></a>
       <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
@@ -24,6 +24,19 @@
 	<div class="col s12" id="main-panel">
 		<div class="card" style="max-width: 800px;">
       <div class="card-content">
+        <div class="preloader-container">
+            <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <h4 class="panel-title">Services</h4>  <a class="waves-effect waves-light btn light-blue darken-4 right" href="#addService">ADD</a>
         </div>
@@ -161,8 +174,9 @@ var uid = null;
         var storageRef = storage.ref();
 
         storageRef.child(user.photoURL).getDownloadURL().then(function(url){
-
-          console.log(url);
+          if(url){
+            $('#profilePic').attr('src', url);
+          }
         }).catch(function(error){
           console.log('error in storage');
           console.log(error);
@@ -245,8 +259,6 @@ var uid = null;
         });
 
 
-
-
         function addServiceElement(key, name, price, clinic_id){
 
           var tr =  $('<tr>').attr('id', key).data('id', key).data('clinic_id', clinic_id)
@@ -310,6 +322,8 @@ var uid = null;
             var dataList = dataSnapshot.val();
 
             //console.log(dataList[Object.keys(dataList)[1]]);
+
+            stopPreloader();
 
             var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);
               lastPage = lastPage == 0 ? 1 : lastPage;

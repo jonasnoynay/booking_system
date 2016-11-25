@@ -43,6 +43,10 @@
 		  	console.log(error);
 		});
 	});
+
+	function stopPreloader(){
+        $('.preloader-container').remove();
+      }
 	</script>
 
 	@yield('custom-js')
