@@ -13,12 +13,12 @@
       <a href="#!name"><span class="white-text name" id="user_name"></span></a>
       <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
-    <li><a href="{{ url('dashboard') }}" class="waves-effect">Dashboard</a></li>
-    <li><a href="{{ url('clinics') }}" class="waves-effect">Clinics</a></li>
-    <li><a href="{{ url('services') }}" class="waves-effect">Services</a></li>
+    <li><a href="{{ url('doctor/dashboard') }}" class="waves-effect">Dashboard</a></li>
+    <li><a href="{{ url('doctor/clinics') }}" class="waves-effect">Clinics</a></li>
+    <li><a href="{{ url('doctor/services') }}" class="waves-effect">Services</a></li>
     <li><div class="divider"></div></li>
     <li><a class="subheader">My Account</a></li>
-    <li class="active"><a class="waves-effect" href="{{ url('profile') }}">My Profile</a></li>
+    <li class="active"><a class="waves-effect" href="{{ url('doctor/profile') }}">My Profile</a></li>
     <li><a class="waves-effect" href="#!" id="sidebar_signout">Sign Out</a></li>
   </ul>
 	<div class="col s12" id="main-panel">
