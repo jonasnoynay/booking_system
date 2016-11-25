@@ -122,9 +122,8 @@ var uid = null;
       $('#user_name').text(user.displayName);
       $('#user_email').text(user.email);
       $('#user_signout').text(user.displayName);
-      $('#profile_picture').text(user.photoURL);
+      $('#profile_picture').val(user.photoURL);
       uid = user.uid;
-
 
       if(user.photoURL){
           storageRef.child(user.photoURL).getDownloadURL().then(function(url){

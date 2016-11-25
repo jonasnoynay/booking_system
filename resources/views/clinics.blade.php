@@ -9,7 +9,7 @@
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
       </div>
-      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg" id="profilePic"></a>
       <a href="#!name"><span class="white-text name" id="user_name"></span></a>
       <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
@@ -141,6 +141,17 @@ var uid = null;
 		$('#user_email').text(user.email);
 		$('#user_signout').text(user.displayName);
 			uid = user.uid;
+
+		if(user.photoURL){
+          storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+              if(url){
+                  $('#profilePic').attr('src', url);
+                }
+          }).catch(function(error){
+              console.log(error);
+            });
+          }
+
 	  }else{
 	  	window.location.href="/";
 	  }
@@ -155,6 +166,7 @@ var uid = null;
 
 	var database = firebase.database();
 	var toastDuration = 3000;
+	 var storageRef = firebase.storage().ref();
 
 	//Firebase reference for clinics
 	var clinicsRef = database.ref("clinics");
@@ -226,7 +238,7 @@ var uid = null;
 					var dataList = dataSnapshot.val();
 
 					stopPreloader();
-					
+
 					//console.log(dataList[Object.keys(dataList)[1]]);
 
 					var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);

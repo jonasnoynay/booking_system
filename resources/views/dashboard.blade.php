@@ -52,7 +52,7 @@
       <div class="background">
         <img src="http://materializecss.com/images/office.jpg">
       </div>
-      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+      <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg" id="profilePic"></a>
       <a href="#!name"><span class="white-text name" id="user_name"></span></a>
       <a href="#!email"><span class="white-text email" id="user_email"></span></a>
     </div></li>
@@ -86,6 +86,17 @@
 	  	$('#user_name').text(user.displayName);
 		$('#user_email').text(user.email);
 		$('#user_signout').text(user.displayName);
+
+		if(user.photoURL){
+          storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+              if(url){
+                  $('#profilePic').attr('src', url);
+                }
+          }).catch(function(error){
+              console.log(error);
+            });
+          }
+
 	  }else{
 	  	window.location.href="/";
 	  }
@@ -97,6 +108,8 @@
 	<script type="text/javascript" src="{{ asset('js/moment.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/fullcalendar.min.js') }}"></script>
 	<script>
+
+	var storageRef = firebase.storage().ref();
 
 		$(document).ready(function() {
 
