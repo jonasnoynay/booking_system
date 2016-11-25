@@ -107,11 +107,17 @@ function checkDataIsEmpty() {
 function initialFullCalendar() {
 			var calendar = $('#calendar');
 					calendar.fullCalendar({
-			       	header: {
+
+					header : {
+						left: 'today,month,agendaDay,agendaWeek prev,next',
+						center : 'title',
+						right : ''
+					},
+			       /*	header: {
 			       		left: 'title',
 			       		center: '',
 			       		right: 'today,month,agendaDay,agendaWeek prev,next',
-			       	},
+			       	},*/
 			        selectable: true,
 			        selectHelper: true,
 			        editable: true,
