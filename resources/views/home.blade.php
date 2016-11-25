@@ -71,38 +71,61 @@
 <div class="row">
 @include('home-navbar')
 <div id="calendar"></div>
-</div>
 
-  <div id="addAppointment" class="modal" style="max-width: 600px;">
-    <form action="" id="addClinicForm">
-    	<div class="modal-content">
-	      <h5>Add Appointment</h5>
-	      <div class="row">
-	              <div class="row">
-	                <div class="input-field">
-	                  <select id="addServiceSelectClinic">
-	                    <option value="" disabled selected>Choose a clinic</option>
-	                    
-	                    <!-- <option value="1">Option 1</option>
-	                    <option value="2">Option 2</option>
-	                    <option value="3">Option 3</option> -->
-	                  </select>
-	                  <label>Clinic</label>
-	                </div>
-	              </div>
-	      			<div class="row">
-				        <div class="input-field">
-				          <input id="clinic_address" type="text" class="validate">
-				          <label for="clinic_address">Clinic Address</label>
-				        </div>
-			      	</div>
-	      </div>
-	    </div>
-	    <div class="modal-footer">
-	      <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
-	      <button type="submit" class="modal-action modal-close waves-effect waves-light btn-flat">Submit</button>
-	    </div>
-    </form>
+<!-- Modal Structure -->
+  <div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+       <div class="input-field col s12" id="input-clinics">
+	      <select id="clinic">
+	      <option value="" disabled selected>Choose Clinic</option>
+	      <option value="1">Clinic 1</option>
+	      <option value="2">Clinic 2</option>
+	      <option value="3">Clinic 3</option>
+	    </select>
+   		 <label>DENTAL CLINIC</label> 
+      </div>
+
+       <div class="input-field col s12" id="input-services">
+	      <select id="services">
+	      <option value="" disabled selected>Choose Services</option>
+	      <option value="1">Service 1</option>
+	      <option value="2">Service 2</option>
+	      <option value="3">Service 3</option>
+	    </select>
+   		 <label>SERVICES</label> 
+      </div>
+      	<div class="inupt-field col s12">
+      	<p>
+	      <input type="checkbox" id="allDay" />
+	      <label for="allDay">All Day</label>
+	    </p>
+      	</div>
+       	 <div class="input-field col s6">
+          <input id="price" type="number" class="validate">
+         <!--  <label for="price">PRICE</label> -->
+        </div>
+        <span id="schedule_error"></span>
+        <div class="input-field col s6">
+          <input id="duration_time" type="time">
+        </div>
+
+       <div class="input-field col s6">
+            <span id="day"></span>
+        </div>
+        <div class="input-field col s6">
+          <input id="schedule_time" type="time">
+        </div>
+        <div class="input-field col s12">
+          <textarea id="notes" class="materialize-textarea" required=""></textarea>
+          <label for="notes">NOTES</label>
+        </div>
+
+    </div>
+    <div class="modal-footer bottom-button">
+     <a href="#!" class="waves-effect waves-green btn-flat" id="submit">Submit</a>
+     <a href="#!" class="waves-effect waves-green btn-flat" id="btn_cancel">Cancel</a> 
+     <a href="#!" class="waves-effect waves-green btn-flat" id="delete">Delete</a> 
+    </div>
   </div>
 
   <div id="loginUser" class="modal" style="max-width: 600px;">
@@ -135,6 +158,7 @@
 </div> -->
     </form>
   </div>
+
 
 @endsection
 
@@ -176,7 +200,7 @@ var uid = null;
 		  }
 		});
 
-		$('#loginForm').on('submit', function(e){
+		/*$('#loginForm').on('submit', function(e){
 			e.preventDefault();
 			console.log('login');
 		});
@@ -214,8 +238,10 @@ var uid = null;
 
 			    }
 		        // put your options and callbacks here
-		    });
+		    });*/
 		});
 
 	</script>
+		<script type="text/javascript" src="{{ asset('js/booking.js') }}"></script>
+	
 @endsection
