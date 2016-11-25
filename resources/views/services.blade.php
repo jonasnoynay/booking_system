@@ -202,8 +202,6 @@ var uid = null;
           if(service_name && service_price && uid && clinic_id){
 
             var newServiceRef = servicesRef.push();
-            
-
 
 
             newServiceRef.set({
@@ -248,9 +246,17 @@ var uid = null;
           $('#serviceTable')
             .append(tr);
 
-             clinicsRef.child(clinic_id).once('value', function(dataSnapshot){
-                        tr.find('clinic').text(dataSnapshot.val().name);
-                      });
+
+            var clinicName = $('#addServiceSelectClinic').find('option[value="'+clinic_id+'"]').text();
+
+            if(clinicName){
+              tr.find('.clinic').text(clinicName);
+            }
+
+            /* clinicsRef.child(clinic_id).once('value', function(dataSnapshot){
+              console.log(dataSnapshot.val().name);
+                        tr.find('.clinic').text(dataSnapshot.val().name);
+                      });*/
 
 
 
@@ -278,43 +284,49 @@ var uid = null;
             $(addServiceSelectClinic).material_select();
             $(editServiceSelectClinic).material_select();
 
+            startServices();
+
         });
 
-        servicesRef.orderByChild('uid').equalTo(uid).on('value', function(dataSnapshot){
+        function startServices(){
 
-          var dataList = dataSnapshot.val();
+          servicesRef.orderByChild('uid').equalTo(uid).on('value', function(dataSnapshot){
 
-          //console.log(dataList[Object.keys(dataList)[1]]);
+            var dataList = dataSnapshot.val();
 
-          var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);
-            lastPage = lastPage == 0 ? 1 : lastPage;
-          $('#pagination').html('');
-          $('#pagination').materializePagination({
-              align: 'left',
-              lastPage:  lastPage,
-              firstPage:  1,
-              useUrlParameter: false,
-              onClickCallback: function(requestedPage){
-                  var end = requestedPage * maxPerPage; 
-                  var start = (end - maxPerPage) + 1;
-                  $('#serviceTable').html('');
-                  if(dataList){
-                  for(i=start;i<=end;i++){
-                      var key = Object.keys(dataList)[i - 1];
-                      var val = dataList[key];
-                      if(key && val){
-                        addServiceElement(key, val.name, val.price, val.clinic_id );
-                        //addClinicElement(data.key, data.val().name, data.val().address );
+            //console.log(dataList[Object.keys(dataList)[1]]);
+
+            var lastPage = Math.ceil(dataSnapshot.numChildren() / maxPerPage);
+              lastPage = lastPage == 0 ? 1 : lastPage;
+            $('#pagination').html('');
+            $('#pagination').materializePagination({
+                align: 'left',
+                lastPage:  lastPage,
+                firstPage:  1,
+                useUrlParameter: false,
+                onClickCallback: function(requestedPage){
+                    var end = requestedPage * maxPerPage; 
+                    var start = (end - maxPerPage) + 1;
+                    $('#serviceTable').html('');
+                    if(dataList){
+                    for(i=start;i<=end;i++){
+                        var key = Object.keys(dataList)[i - 1];
+                        var val = dataList[key];
+                        if(key && val){
+                          addServiceElement(key, val.name, val.price, val.clinic_id );
+                          //addClinicElement(data.key, data.val().name, data.val().address );
+                        }
+                        
+
                       }
-                      
-
                     }
-                  }
 
-              }
+                }
+            });
+
           });
+        }
 
-        });
     }
 
       var initiated = false;
@@ -374,6 +386,7 @@ var uid = null;
             var edit_clinic_id = $('#editServiceSelectClinic').val();
             if(edit_service_id){
               servicesRef.child(edit_service_id).update({ name : edit_service_name, price : edit_service_price, clinic_id : edit_clinic_id });
+              clin
             }
 
           });
