@@ -169,7 +169,7 @@ var uid = null;
 	 var storageRef = firebase.storage().ref();
 
 	//Firebase reference for clinics
-	var clinicsRef = database.ref("clinics");
+	var clinicsRef = database.ref("booking").child('clinics');
 
 	$(document).on('ready', function(){
 

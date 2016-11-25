@@ -201,8 +201,8 @@ var uid = null;
   var toastDuration = 3000;
 
   //Firebase reference for clinics
-  var servicesRef = database.ref("services");
-  var clinicsRef = database.ref("clinics");
+  var servicesRef = database.ref("booking").child('services');
+  var clinicsRef = database.ref("booking").child('clinics');
 
   $(document).on('ready', function(){
 

@@ -1,99 +1,148 @@
 @extends('layout')
-@section('content')
-<div class="row">
-			<div class="col s12 l6 card darken-1">
-				<div class="col s12">
-				<ul class="tabs" style="overflow: hidden;">
-					<li class="tab col s6"><a href="#login">LOGIN</a> </li>
-					<li class="tab col s6"><a href="#new">NEW USER</a></li>
-				</ul>
-			</div>
-			<div class="col s12">
-				<div id="login" class="col s12">
-					<form action="" id="sign_in">
-						<div class="input-field col s12">
-						<input type="text" placeholder="Email Address" id="signin_email" class="validate">
-						</div>
-						<input type="password" placeholder="Password" id="sign_in_password" class="validate">
-						<button type="submit" class="waves-effect waves-light btn">Sign In</button>
-					</form>
-				</div>
-				<div id="new" class="col s12">
-					<form action="" id="create">
-					<input type="text" placeholder="Fullname" id="create_fullname">
-						<input type="text" placeholder="Email Address" id="create_email">
-						<input type="password" placeholder="Password" id="create_password">
-						<input type="text" placeholder="Contact Number" id="create_contact_no">
-						<input type="text" placeholder="Address" id="create_address">
-						<input type="password" placeholder="Confirm Password" id="create_confirm_password">
-						<button type="submit" class="waves-effect waves-light btn">Create</button>
-					</form>
-				</div>
-			</div>
-			</div>
-		</div>
+
+@section('custom-css')
+	<link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
+	<style>
+		#calendar table{
+			background: #1e88e5;
+		    color: #fff;
+		    font-size: 16px;
+		}
+		#calendar thead{
+			border:0px;
+		}
+		#calendar th{
+			font-weight: normal;
+			padding-top: 1em;
+		}
+		#calendar td, #calendar th{
+			border-style: none;
+			
+		}
+
+		#calendar .fc-head,
+		#calendar .fc-head table{
+			background: #1565c0;
+		}
+
+		/* #calendar .fc-day:hover{
+			background:#0d47a1;
+		} */
+		#calendar .fc-state-highlight{
+			background: #1976d2;
+		}
+		#doctor-nav{
+			transform: translateX(0px);
+		} 
+	</style>
 @endsection
 
+@section('content')
+
+
+
+<div class="row">
+@include('home-navbar')
+<div id="calendar"></div>
+</div>
+
+  <div id="addAppointment" class="modal" style="max-width: 600px;">
+    <form action="" id="addClinicForm">
+    	<div class="modal-content">
+	      <h5>Add Appointment</h5>
+	      <div class="row">
+	              <div class="row">
+	                <div class="input-field">
+	                  <select id="addServiceSelectClinic">
+	                    <option value="" disabled selected>Choose a clinic</option>
+	                    
+	                    <!-- <option value="1">Option 1</option>
+	                    <option value="2">Option 2</option>
+	                    <option value="3">Option 3</option> -->
+	                  </select>
+	                  <label>Clinic</label>
+	                </div>
+	              </div>
+	      			<div class="row">
+				        <div class="input-field">
+				          <input id="clinic_address" type="text" class="validate">
+				          <label for="clinic_address">Clinic Address</label>
+				        </div>
+			      	</div>
+	      </div>
+	    </div>
+	    <div class="modal-footer">
+	      <a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Cancel</a>
+	      <button type="submit" class="modal-action modal-close waves-effect waves-light btn-flat">Submit</button>
+	    </div>
+    </form>
+  </div>
+
+@endsection
+
+@section('auth-js')
+
+<script async="true">
+
+var uid = null;
+		firebase.auth().onAuthStateChanged(function(user) {
+	  if (user) {
+	  	/*$('#user_name').text(user.displayName);
+		$('#user_email').text(user.email);*/
+		$('#user_signout').text(user.displayName);
+
+		uid = user.uid;
+
+		/*if(user.photoURL){
+          storageRef.child(user.photoURL).getDownloadURL().then(function(url){
+              if(url){
+                  $('#profilePic').attr('src', url);
+                }
+          }).catch(function(error){
+              console.log(error);
+            });
+          }*/
+
+	  }
+	});
+</script>
+@endsection
 
 @section('custom-js')
+	<script type="text/javascript" src="{{ asset('js/moment.min.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/fullcalendar.min.js') }}"></script>
 	<script>
-
-	var database = firebase.database();
 
 		$(document).on('ready', function(){
 
 
-			 var usersRef = database.ref("users");
+			//initalize modals
+		$('.modal').modal();
 
+		$('select').material_select();
 
-			$('#sign_in').on('submit', function(e){
-				e.preventDefault();
-				var email_address = $('#signin_email').val();
-				var password = $('#sign_in_password').val();
+			$('#calendar').fullCalendar({
+				dayClick: function(date, jsEvent, view) {
 
-				if(email_address && password){
-					firebase.auth().signInWithEmailAndPassword(email_address, password).then(function(user) {
-					  window.location.href="/dashboard";
-					});
-				}
+					console.log(date);
 
-			});
+					if(uid){
+						$('#addAppointment').modal('open');
+					}
 
-			$('#create').on('submit', function(e){
-			e.preventDefault();
-			var fullname = $('#create_fullname').val();
-			var email_address = $('#create_email').val();
-			var password = $('#create_password').val();
-			var contact_no = $('#create_contact_no').val();
-			var address = $('#create_address').val();
-			var confirm_password = $('#create_confirm_password').val();
-			if(fullname && email_address && password && password == confirm_password){
-				firebase.auth().createUserWithEmailAndPassword(email_address, password).then(function(error) {
+			        //alert('Clicked on: ' + date.format()) ex. 2016-11-09;
 
-				var user = firebase.auth().currentUser;
-					user.updateProfile({
-						  displayName: fullname
-						}).then(function() {
+			        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY) 1012,555;
 
-							var userRef = usersRef.child(user.uid);
-							userRef.set({
-								contact_no : contact_no,
-								address : address
-							});
+			        //alert('Current view: ' + view.name) ex. month;
 
-						  window.location.href="/dashboard";
-						}, function(error) {
-						  console.log(error);
-						});
-				}, function(error){
-					console.log(error);
-				});
-			}
+			        // change the day's background color just for fun
+			        //$(this).css('background-color', 'red');
 
-
-			});
-
+			    }
+		        // put your options and callbacks here
+		    });
 		});
-	</script>
 
+	</script>
 @endsection
