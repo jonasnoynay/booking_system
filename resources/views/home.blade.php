@@ -31,6 +31,33 @@
 		#calendar .fc-state-highlight{
 			background: #1976d2;
 		}
+	
+		#calendar .fc-toolbar{
+			background: #1565c0;
+		    padding-bottom: 1em;
+		    margin: 0;
+		    color: #fff;
+		}
+
+		#calendar .fc-toolbar .fc-button-group button{
+			background: #1565c0;
+		    border: 0;
+		    color: #fff;
+		    text-transform: uppercase;
+		    border-right: 2px solid #fff;
+		    border-radius: 0;
+		    height: 30px;
+		    box-shadow : none;
+		}
+
+		#calendar .fc-toolbar .fc-left{
+			width: 100%;
+		}
+
+		#calendar .fc-toolbar h2{
+			font-size: 36px;
+		}
+
 		#doctor-nav{
 			transform: translateX(0px);
 		} 
@@ -122,6 +149,11 @@ var uid = null;
 		$('select').material_select();
 
 			$('#calendar').fullCalendar({
+				header : {
+					left : 'agendaDay,agendaWeek,month',
+					center : 'title',
+					right : ''
+				},
 				dayClick: function(date, jsEvent, view) {
 
 					console.log(date);
