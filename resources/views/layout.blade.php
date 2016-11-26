@@ -2,7 +2,8 @@
 <head>
     <title>Booking System - @yield('title')</title>
 
-    
+
+   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
 <script>
   // Initialize Firebase
@@ -16,10 +17,12 @@
   firebase.initializeApp(config);
 </script>
 
+
     @yield('auth-js')
 
 
      	<link rel="stylesheet" href="{{ asset('css/materialize.min.css') }}">
+     	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 		@yield('custom-css')
@@ -32,7 +35,7 @@
 		@yield('content')
 		</body>
 
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
 	<script type="text/javascript" src="{{ asset('js/materialize.min.js') }}"></script>
 	
 	<script>
@@ -43,6 +46,10 @@
 		  	console.log(error);
 		});
 	});
+
+	function stopPreloader(){
+        $('.preloader-container').remove();
+      }
 	</script>
 
 	@yield('custom-js')

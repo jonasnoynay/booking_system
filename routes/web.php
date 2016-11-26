@@ -14,16 +14,19 @@
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/doctor/', function () {
+    return view('doctor-login');
+});
 
-Route::get('/dashboard', function () {
+Route::get('/doctor/dashboard', function () {
     return view('dashboard');
 });
-Route::get('/clinics', function () {
+Route::get('/doctor/clinics', function () {
     return view('clinics');
 });
-Route::get('/services', function () {
+Route::get('/doctor/services', function () {
     return view('services');
 });
-Route::get('/profile', function () {
+Route::get('/doctor/profile', function () {
     return view('profile');
 });
