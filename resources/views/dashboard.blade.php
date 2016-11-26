@@ -4,7 +4,7 @@
 @section('custom-css')
 	<link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
 	<style>
-		#calendar table{
+		/*#calendar table{
 			background: #1e88e5;
 		    color: #fff;
 		    font-size: 16px;
@@ -30,7 +30,7 @@
 		}
 		#doctor-nav{
 			transform: translateX(0px);
-		} 
+		} */
 	</style>
 @endsection
 
