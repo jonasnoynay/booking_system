@@ -70,7 +70,7 @@
    <!-- Modal Structure -->
   <div id="modal1" class="modal modal-fixed-footer">
     <div class="modal-content">
-       <div class="input-field col s12">
+       <div class="input-field col s12" id="input-clinics">
 	      <select id="clinic">
 	      <option value="" disabled selected>Choose Clinic</option>
 	      <option value="1">Clinic 1</option>
@@ -80,7 +80,7 @@
    		 <label>DENTAL CLINIC</label> 
       </div>
 
-       <div class="input-field col s12">
+       <div class="input-field col s12" id="input-services">
 	      <select id="services">
 	      <option value="" disabled selected>Choose Services</option>
 	      <option value="1">Service 1</option>
@@ -144,6 +144,7 @@
 @endsection
 
 @section('custom-js')
+
 	<script type="text/javascript" src="{{ asset('js/moment.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/fullcalendar.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/booking.js') }}"></script>
